@@ -1,0 +1,62 @@
+{
+    "appenders": {
+        "console": {
+            "type": "console"
+        },
+
+        "debug": {
+            "type": "dateFile",
+            "filename": "./logs/debug.txt"
+        },
+
+        "onlyDebug": {
+            "type": "logLevelFilter",
+            "appender": "debug",
+            "level": "debug",
+            "maxLevel": "debug"
+        },
+        "info": {
+            "type": "dateFile",
+            "filename": "./logs/info.log"
+        },
+        "onlyInfo": {
+            "type": "logLevelFilter",
+            "appender": "info",
+            "level": "info",
+            "maxLevel": "warn"
+        },
+        "err": {
+            "type": "dateFile",
+            "filename": "./logs/errlog.log"
+        },
+        "onlyError": {
+            "type": "logLevelFilter",
+            "appender": "err",
+            "level": "error"
+        },
+        "http": {
+            "type": "dateFile",
+            "filename": "./logs/access.log"
+        },
+        "mysql": {
+            "type": "dateFile",
+            "filename": "./logs/mysql.log"
+        }
+
+    },
+    "categories": {
+        "default": {
+            "appenders": ["console", "onlyDebug", "onlyError", "onlyInfo"],
+            "level": "debug"
+        },
+        "http": {
+            "appenders": ["http"],
+            "level": "error"
+        },
+        "mysql": {
+            "appenders": ["mysql"],
+            "level": "info"
+        }
+    }
+
+}
