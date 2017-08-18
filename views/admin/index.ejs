@@ -5,9 +5,6 @@
 	<title>login</title>
 </head>
 <body>
-<%if (typeof(msg) !== 'undefined'){%>
-	<h1><%=msg%></h1>
-<%} %>
 <form action="/login" method="post" accept-charset="utf-8">
 		<input type="text" name="account">
 		<br>
@@ -15,5 +12,17 @@
 		<br>
 		<input type="submit" value="提交">
 </form>
+<script>
+
+if(GetQueryString("msg")){
+	alert(GetQueryString("msg"))
+}
+
+function GetQueryString(name){
+     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+     var r = window.location.search.substr(1).match(reg);
+     if(r!=null)return  unescape(r[2]); return null;
+}
+</script>
 </body>
 </html>

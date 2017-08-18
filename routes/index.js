@@ -28,7 +28,7 @@ router.post('/login', function(req, res, next) {
         req.session.token = account + password;
         res.redirect('./admin');
     } else {
-        res.redirect(301, '/index');
+        res.redirect(301, '/index?msg=account or password error');
     }
 });
 
