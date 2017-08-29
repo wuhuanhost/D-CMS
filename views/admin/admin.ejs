@@ -36,12 +36,15 @@
 		float:left;
 			border-right: 1px solid #333333;
 	}
+	
 	.right{
 		width:calc(100% - 360px);
 		height:100%;
 		/*background: yellow;*/
 		float:left;
 	}
+
+	
 	</style>
 	<script>
 		window.uid='<%= user.uid%>';
@@ -61,6 +64,8 @@
 			</div>
 			<div class="right">
 				<!-- 内容区域 -->
+				<%var abc=getData(m,2)%>
+				<%=abc%>
 		        <iframe id="content" name="content"  frameborder="0"></iframe>
 			</div>
 		</div>

@@ -28,9 +28,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({
- secret: 'sessiontest',//与cookieParser中的一致
- resave: true,
- saveUninitialized:true
+    secret: 'sessiontest', //与cookieParser中的一致
+    resave: true,
+    saveUninitialized: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);

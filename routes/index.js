@@ -3,7 +3,7 @@ var router = express.Router();
 var check = require('../src/utils/check.js');
 
 //登录后的管理页面
-router.get('/admin',check.checkAdminLogin, function(req, res, next) {
+router.get('/admin', check.checkAdminLogin, function(req, res, next) {
     var menu = [{
         name: "测试菜单1",
         href: "/test1.html"
@@ -14,6 +14,18 @@ router.get('/admin',check.checkAdminLogin, function(req, res, next) {
         name: "测试菜单3",
         href: "/test3.html"
     }]
+
+    // 1、解析模板中的方法
+    // 2、编译并执行模板中的方法
+    // 3、组装数据
+    
+    res.locals = {
+        getData: function(a, b) {
+            return a + b;
+        },
+        m: 10,//参数
+        n: 1
+    }
     res.render('admin/admin', { menu: menu, user: { uid: req.session.uid, token: req.session.token } });
 });
 
@@ -41,5 +53,3 @@ router.get('/index', function(req, res, next) {
 
 
 module.exports = router;
-
-
