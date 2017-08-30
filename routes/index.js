@@ -19,7 +19,7 @@ router.get('/admin', check.checkAdminLogin, function(req, res, next) {
     // 1、解析模板中的方法
     // 2、编译并执行模板中的方法
     // 3、组装数据
-    aabbcc.input(function(result) {
+    aabbcc.execTemplateFunc(function(result) {
     	console.log("============================>");
     	console.log(result);
         res.locals = result;

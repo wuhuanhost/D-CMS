@@ -70,7 +70,6 @@ function genFunction(params, cb) {
     //方法2，所有的业务方法可以放在其它文件中
     params.params.push(cb);
     services[params.funcName].apply(null, params.params); //调用这个函数并且把参数传递进去
-
 }
 
 // var p1= new Promise((resolve, reject) => {
@@ -124,9 +123,7 @@ function actionParam(params) {
     return params;
 }
 
-
-
-exports.input = function(cb) {
+exports.execTemplateFunc = function(cb) {
     var list = []; //字符串方法数组
     for (var i = 0; i < params.length; i++) {
         // var params1 = actionParam(params1);
