@@ -45,11 +45,7 @@ var params = [{
     params: [20, 10]
 }]
 
-//模拟request中的参数
-var request = {
-    m: 100,
-    n: 2
-}
+
 
 
 /**
@@ -87,7 +83,7 @@ function genFunction(params, cb) {
 
 
 //执行时候的匿名函数
-var str = `new Promise((resolve, reject) => {
+var str1 = `new Promise((resolve, reject) => {
     //执行函数获取结果
     genFunction(params, function(err,result) {
        if(err){
@@ -114,24 +110,24 @@ var str = `new Promise((resolve, reject) => {
  * @param  {[type]} params [description]
  * @return {[type]}        [description]
  */
-function actionParam(params) {
+function actionParam(requestParams,params) {
     for (var i = 0; i < params.params.length; i++) {
         if (/^_.*?_$/.test(params.params[i])) { //是占位符参数
-            params.params[i] = request[params.params[i].replace(/_/g, "")]
+            params.params[i] = requestParams[params.params[i].replace(/_/g, "")]
         }
     }
     return params;
 }
 
-exports.execTemplateFunc = function(cb) {
+exports.execTemplateFunc = function(requestParams,cb) {
     var list = []; //字符串方法数组
     for (var i = 0; i < params.length; i++) {
         // var params1 = actionParam(params1);
         (function() {
             var params2 = copyArr(params[i].params); //方法的参数
-            var params1 = actionParam(params[i]);
+            var params1 = actionParam(requestParams,params[i]);
             console.log(params1)
-            var str1 = `new Promise((resolve, reject) => {
+            var str = `new Promise((resolve, reject) => {
 		    //执行函数获取结果
 		    genFunction(params1, function(err,result) {
 		       if(err){
@@ -147,7 +143,7 @@ exports.execTemplateFunc = function(cb) {
 			        	 argument.push("params"+j);console.log(params2[j])
 			        	 if (/^_.*_$/.test(params2[j])) { //是占位符参数
 			        	 	var temp=params2[j].replace(/_/g,"");
-						     data[temp]=request[params2[j].replace(/_/g, "")];
+						     data[temp]=requestParams[params2[j].replace(/_/g, "")];
         				}
 			        }
 			        data[params1.funcName] = new Function(argument, "return " + params1.result + ";");
@@ -157,7 +153,7 @@ exports.execTemplateFunc = function(cb) {
 		    })
 		});
 		`
-            list.push(eval(str1));
+            list.push(eval(str));
         })(i);
     }
     //执行所有的异步方法获取数据

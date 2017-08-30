@@ -14,14 +14,18 @@ router.get('/admin', check.checkAdminLogin, function(req, res, next) {
     }, {
         name: "测试菜单3",
         href: "/test3.html"
-    }]
-
-    // 1、解析模板中的方法
-    // 2、编译并执行模板中的方法
-    // 3、组装数据
-    aabbcc.execTemplateFunc(function(result) {
-    	console.log("============================>");
-    	console.log(result);
+    }];
+    //模拟request中的参数
+    var requestParams = {
+            m: 100,
+            n: 2
+        }
+        // 1、解析模板中的方法
+        // 2、编译并执行模板中的方法
+        // 3、组装数据
+    aabbcc.execTemplateFunc(requestParams, function(result) {
+        console.log("============================>");
+        console.log(result);
         res.locals = result;
         res.render('admin/admin', { menu: menu, user: { uid: req.session.uid, token: req.session.token } });
     });
