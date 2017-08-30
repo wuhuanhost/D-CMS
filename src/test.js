@@ -1,8 +1,26 @@
-function abc(a, b, cb) {
+function getData(a, b, c, cb) {
     setTimeout(function() {
-        cb(a + b);
+        // console.log(a);
+        // console.log(b);
+        // console.log(cb);
+        cb(null, a + b + c);
     }, 3000);
 }
+
+
+
+function abx(a, b, cb) {
+    setTimeout(function() {
+        // console.log(a);
+        // console.log(b);
+        // console.log(cb);
+        cb(null, a + b);
+    }, 3000);
+}
+
+
+
+var services = require("./test1.js");
 
 var fun = `function test(cb){
 	abc(1,2,function(r){
@@ -17,11 +35,22 @@ test(function(result){
 
 //解析函数
 var templateHtml = "<%var abc=abc(m,2);%>";
-var params = {
-    resultName: "abc",
-    funcName: "abc",
-    params: ["1", "2"]
+
+//解析模板后的数据结构
+var params = [{
+    funcName: "getData",
+    params: ["_m_", "_n_", 1]
+}, {
+    funcName: "abx",
+    params: [20, 10]
+}]
+
+//模拟request中的参数
+var request = {
+    m: 100,
+    n: 2
 }
+
 
 /**
  * 生成执行函数
@@ -29,25 +58,173 @@ var params = {
  * @return {[type]}        [description]
  */
 function genFunction(params, cb) {
-    var funcBB = eval(params.resultName);
-    return new funcBB(params.params[0], params.params[1], function(result) {
-        console.log(result);
-        cb(result)
-    });
+
+    // return new funcBB(params.params[0],params.params[1], function(result) {
+    //     console.log(result);
+    //     cb(result)
+    // });
+    //方法一，所有的业务方法必须在此文件中
+    // var func = eval(params.funcName);
+    // params.params.push(cb);
+    // services[params.funcName].apply(null, params.params); //调用这个函数并且把参数传递进去
+    //方法2，所有的业务方法可以放在其它文件中
+    params.params.push(cb);
+    services[params.funcName].apply(null, params.params); //调用这个函数并且把参数传递进去
 
 }
 
+// var p1= new Promise((resolve, reject) => {
+//     //执行函数获取结果
+//     genFunction(params, function(result) {
+//         params.result = result;
+//         console.log(params)
+//         var data = {};
+//         var argument = ["x", "y"]; //根据参数个数动态生成
+//         data[params.funcName] = new Function(argument, "return " + params.result + ";");
+//         data.m = 1;
+//         console.log(data[params.funcName]())
+//     })
+// });
+
+
+//执行时候的匿名函数
+var str = `new Promise((resolve, reject) => {
+    //执行函数获取结果
+    genFunction(params, function(err,result) {
+       if(err){
+			reject(err);
+       }else{
+	       	params.result = result;
+	        console.log(params)
+	        var data = {};
+	        var argument = []; //根据参数个数动态生成
+	        for(var i=0;i<params.params.length-1;i++){
+				argument.push("params"+i);
+	        }
+	        data[params.funcName] = new Function(argument, "return " + params.result + ";");
+	        data.m = 1;
+	        //console.log(data[params.funcName]())
+	        resolve(data);
+       }
+    })
+});
+`
+
+/**
+ * 处理前端传过来的占位符参数
+ * @param  {[type]} params [description]
+ * @return {[type]}        [description]
+ */
+function actionParam(params) {
+    for (var i = 0; i < params.params.length; i++) {
+        if (/^_.*?_$/.test(params.params[i])) { //是占位符参数
+            params.params[i] = request[params.params[i].replace(/_/g, "")]
+        }
+    }
+    return params;
+}
+
+
+
+exports.input = function(cb) {
+    var list = []; //字符串方法数组
+    for (var i = 0; i < params.length; i++) {
+        // var params1 = actionParam(params1);
+        (function() {
+            var params2 = copyArr(params[i].params); //方法的参数
+            var params1 = actionParam(params[i]);
+            console.log(params1)
+            var str1 = `new Promise((resolve, reject) => {
+		    //执行函数获取结果
+		    genFunction(params1, function(err,result) {
+		       if(err){
+					reject(err);
+		       }else{
+		       		params1.result = result;
+		       		// console.log("++++++++++++++++++++++++")
+		       		console.log(params2);
+			        // console.log(params1)
+			        var data = {};
+			        var argument = []; //根据参数个数动态生成
+			        for(var j=0;j<params1.params.length-1;j++){
+			        	 argument.push("params"+j);console.log(params2[j])
+			        	 if (/^_.*_$/.test(params2[j])) { //是占位符参数
+			        	 	var temp=params2[j].replace(/_/g,"");
+						     data[temp]=request[params2[j].replace(/_/g, "")];
+        				}
+			        }
+			        data[params1.funcName] = new Function(argument, "return " + params1.result + ";");
+			        //console.log(data[params1.funcName]())
+			        resolve(data);
+		       }
+		    })
+		});
+		`
+            list.push(eval(str1));
+        })(i);
+    }
+    //执行所有的异步方法获取数据
+    Promise.all(list).then(values => {
+        console.log(values);
+        var list = {};
+        for (var i = 0; i < values.length; i++) {
+            list = deepCopy(list, values[i]);
+        }
+        console.log("------------------------");
+        console.log(list)
+        cb(list);
+    }).catch(function(reason) {
+        console.log(reason);
+    });
+}
+
 //执行函数获取结果
-genFunction(params, function(result) {
-    params.result = result;
-    console.log(params)
-    var data = {};
-    data[params.funcName] = new Function("x", "y", "return " + params.result + ";");
-    data.m = 1;
-    console.log(data[params.funcName]())
-})
+// genFunction(params, function(result) {
+//     params.result = result;
+//     console.log(params)
+//     var data = {};
+//     var argument = ["x", "y"]; //根据参数个数动态生成
+//     data[params.funcName] = new Function(argument, "return " + params.result + ";");
+//     data.m = 1;
+//     console.log(data[params.funcName]())
+// })
+
+
+
+
 
 
 //组装数据
 var data = {};
 // data[params.funcName] = new Function(params.params[0], params.params[1], "return " + params.result + "");
+
+/**
+ * 数组拷贝
+ * @param  {[type]} arr [description]
+ * @return {[type]}     [description]
+ */
+function copyArr(arr) {
+    let res = []
+    for (let i = 0; i < arr.length; i++) {
+        res.push(arr[i])
+    }
+    return res
+}
+
+
+/**
+ * 对象深拷贝
+ * @param  {[type]} p [description]
+ * @param  {[type]} c [description]
+ * @return {[type]}   [description]
+ */
+function deepCopy(p, c) {　　　　
+    var c = c || {};　　　　
+    for (var i in p) {　　　　　　
+        if (typeof p[i] === 'object') {　　　　　　　　
+            c[i] = (p[i].constructor === Array) ? [] : {};　　　　　　　　
+            deepCopy(p[i], c[i]);　　　　　　
+        } else {　　　　　　　　　 c[i] = p[i];　　　　　　 }　　　　
+    }　　　　
+    return c;　　
+}

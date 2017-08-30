@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var check = require('../src/utils/check.js');
+var aabbcc = require('../src/test.js');
 
 //登录后的管理页面
 router.get('/admin', check.checkAdminLogin, function(req, res, next) {
@@ -18,15 +19,12 @@ router.get('/admin', check.checkAdminLogin, function(req, res, next) {
     // 1、解析模板中的方法
     // 2、编译并执行模板中的方法
     // 3、组装数据
-    
-    res.locals = {
-        getData: function(a, b) {
-            return a + b;
-        },
-        m: 10,//参数
-        n: 1
-    }
-    res.render('admin/admin', { menu: menu, user: { uid: req.session.uid, token: req.session.token } });
+    aabbcc.input(function(result) {
+    	console.log("============================>");
+    	console.log(result);
+        res.locals = result;
+        res.render('admin/admin', { menu: menu, user: { uid: req.session.uid, token: req.session.token } });
+    });
 });
 
 //admin登录方法
