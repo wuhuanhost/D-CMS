@@ -35,6 +35,6 @@ exports.abxsdasdsad = function(a, b, cb) {
         // console.log(a);
         // console.log(b);
         // console.log(cb);
-        cb(null, a+b-100);
+        cb(null, parseInt(a)+parseInt(b)-100);
     }, 1000);
 }

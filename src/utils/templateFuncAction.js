@@ -130,9 +130,8 @@ exports.execTemplateFunc = function(templateFuncData, requestParams, cb) {
     var list = []; //字符串方法数组
     for (var i = 0; i < templateFuncData.length; i++) {
         // var params1 = actionParam(params1);
-        (function() {
-            var funcParams = copyArr(templateFuncData[i].params); //方法的参数
-            var params1 = actionParam(requestParams, templateFuncData[i]);
+            let funcParams = copyArr(templateFuncData[i].params); //方法的参数
+            let params1 = actionParam(requestParams, templateFuncData[i]);
             //    console.log("++++++++++++++++++++++++");
             // console.log(params1);
             //       console.log("------------------------");
@@ -169,7 +168,6 @@ exports.execTemplateFunc = function(templateFuncData, requestParams, cb) {
                 })
             });
             list.push(str);
-        })(i);
     }
     //执行所有的异步方法获取数据
     Promise.all(list).then(values => {
