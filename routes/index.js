@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var check = require('../src/utils/check.js');
-var aabbcc = require('../src/test.js');
+var aabbcc = require('../src/utils/templateFuncAction.js');
 
 //登录后的管理页面
 router.get('/admin', check.checkAdminLogin, function(req, res, next) {
@@ -17,17 +17,30 @@ router.get('/admin', check.checkAdminLogin, function(req, res, next) {
     }];
     //模拟request中的参数
     var requestParams = {
-            m: 100,
-            n: 2
+        m: 100,
+        n: 2
+    };
+    //解析模后的数据结构
+    var templateFuncData = [{
+        funcName: "getData",
+        params: ["_m_", "_n_", 1]
+    }, {
+        funcName: "abx",
+        params: [20, 10]
+    }];
+
+    // 1、解析模板中的方法
+    // 2、编译并执行模板中的方法
+    // 3、组装数据
+    aabbcc.execTemplateFunc(templateFuncData, requestParams, function(err, result) {
+        // console.log("============================>");
+        // console.log(result);
+        if (err) {
+            res.render('error', err);
+        } else {
+            res.locals = result;
+            res.render('admin/admin', { menu: menu, user: { uid: req.session.uid, token: req.session.token } });
         }
-        // 1、解析模板中的方法
-        // 2、编译并执行模板中的方法
-        // 3、组装数据
-    aabbcc.execTemplateFunc(requestParams, function(result) {
-        console.log("============================>");
-        console.log(result);
-        res.locals = result;
-        res.render('admin/admin', { menu: menu, user: { uid: req.session.uid, token: req.session.token } });
     });
 });
 

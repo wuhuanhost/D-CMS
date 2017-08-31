@@ -2,9 +2,9 @@ function getData(a, b, c, cb) {
     setTimeout(function() {
         // console.log(a);
         // console.log(b);
-        console.log(cb);
+        // console.log(cb);
         cb(null, a + b + c);
-    }, 3000);
+    }, 1000);
 }
 
 function abx(a, b, cb) {
@@ -13,7 +13,7 @@ function abx(a, b, cb) {
         // console.log(b);
         // console.log(cb);
         cb(null, a - b);
-    }, 3000);
+    }, 1000);
 }
 
 
