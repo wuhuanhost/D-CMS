@@ -29,6 +29,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({
     secret: 'sessiontest', //与cookieParser中的一致
+    cookie: { maxAge: 1800000 },
     resave: true,
     saveUninitialized: true
 }));
