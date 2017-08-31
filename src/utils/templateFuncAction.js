@@ -19,6 +19,7 @@
 
 var services = require("../biz/openCommFunc.js");
 
+
 //测试字符串函数的执行
 // var fun = `function test(cb){
 // 	abc(1,2,function(r){
@@ -149,7 +150,7 @@ exports.execTemplateFunc = function(templateFuncData, requestParams, cb) {
 				        	 // console.log(funcParams[j]+"   "+j)
 				        	 if (/^_.*_$/.test(funcParams[j])) { //是占位符参数
 				        	 	var temp=funcParams[j].replace(/_/g,"");
-							    data[temp]=requestParams[funcParams[j].replace(/_/g, "")];
+							    data["_"+temp+"_"]=requestParams[funcParams[j].replace(/_/g, "")];
 	        				}
 				        }
 				        data[params1.funcName] = new Function(argument, "return " + params1.result + ";");
@@ -159,7 +160,6 @@ exports.execTemplateFunc = function(templateFuncData, requestParams, cb) {
 			    })
 			});`
             list.push(eval(str));
-   
     }
     //执行所有的异步方法获取数据
     Promise.all(list).then(values => {

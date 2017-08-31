@@ -3,7 +3,7 @@ function getData(a, b, c, cb) {
         // console.log(a);
         // console.log(b);
         // console.log(cb);
-        cb(null, a + b + c);
+        cb(null, parseInt(a) + parseInt(b) + parseInt(c));
     }, 1000);
 }
 
@@ -12,7 +12,7 @@ function abx(a, b, cb) {
         // console.log(a);
         // console.log(b);
         // console.log(cb);
-        cb(null, a - b);
+       cb(null, parseInt(a) - parseInt(b));
     }, 1000);
 }
 
