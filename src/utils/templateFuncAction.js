@@ -22,12 +22,12 @@ var services = require("../biz/openCommFunc.js");
 
 //测试字符串函数的执行
 // var fun = `function test(cb){
-// 	abc(1,2,function(r){
-// 		cb(r);
-// 	});
+//  abc(1,2,function(r){
+//      cb(r);
+//  });
 // };
 // test(function(result){
-// 	console.log(result);
+//  console.log(result);
 // });`;
 
 // // eval(fun);
@@ -87,19 +87,19 @@ function genFunction(_params, cb) {
 //     //执行函数获取结果
 //     genFunction(params, function(err,result) {
 //        if(err){
-// 			reject(err);
+//          reject(err);
 //        }else{
-// 	       	params.result = result;
-// 	        console.log(params)
-// 	        var data = {};
-// 	        var argument = []; //根据参数个数动态生成
-// 	        for(var i=0;i<params.params.length-1;i++){
-// 				argument.push("params"+i);
-// 	        }
-// 	        data[params.funcName] = new Function(argument, "return " + params.result + ";");
-// 	        data.m = 1;
-// 	        //console.log(data[params.funcName]())
-// 	        resolve(data);
+//          params.result = result;
+//          console.log(params)
+//          var data = {};
+//          var argument = []; //根据参数个数动态生成
+//          for(var i=0;i<params.params.length-1;i++){
+//              argument.push("params"+i);
+//          }
+//          data[params.funcName] = new Function(argument, "return " + params.result + ";");
+//          data.m = 1;
+//          //console.log(data[params.funcName]())
+//          resolve(data);
 //        }
 //     })
 // });
@@ -130,36 +130,46 @@ exports.execTemplateFunc = function(templateFuncData, requestParams, cb) {
     var list = []; //字符串方法数组
     for (var i = 0; i < templateFuncData.length; i++) {
         // var params1 = actionParam(params1);
-            let funcParams = copyArr(templateFuncData[i].params); //方法的参数
-            let params1 = actionParam(requestParams, templateFuncData[i]);
+        (function() {
+            var funcParams = copyArr(templateFuncData[i].params); //方法的参数
+            var params1 = actionParam(requestParams, templateFuncData[i]);
             //    console.log("++++++++++++++++++++++++");
             // console.log(params1);
             //       console.log("------------------------");
-            var str = `new Promise((resolve, reject) => {
-			    //执行函数获取结果
-			    genFunction(params1, function(err,result) {
-			       if(err){
-						reject(err);
-			       }else{
-			       		params1.result = result;
-				        // console.log(params1)
-				        var data = {};
-				        var argument = []; //根据参数个数动态生成
-				        for(var j=0;j<params1.params.length-1;j++){
-				        	 argument.push("params"+j);
-				        	 // console.log(funcParams[j]+"   "+j)
-				        	 if (/^_.*_$/.test(funcParams[j])) { //是占位符参数
-				        	 	var temp=funcParams[j].replace(/_/g,"");
-							    data["_"+temp+"_"]=requestParams[funcParams[j].replace(/_/g, "")];
-	        				}
-				        }
-				        data[params1.funcName] = new Function(argument, "return " + params1.result + ";");
-				        //console.log(data[params1.funcName]())
-				        resolve(data);
-			       }
-			    })
-			});`
-            list.push(eval(str));
+            var str = new Promise((resolve, reject) => {
+                //执行函数获取结果
+                genFunction(params1, function(err, result) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        // console.log(result)
+                        params1.result = result;
+                        // console.log(params1.result);
+                        var data = {};
+                        var argument = []; //根据参数个数动态生成
+                        for (var j = 0; j < params1.params.length - 1; j++) {
+                            argument.push("params" + j);
+                            // console.log(funcParams[j]+"   "+j)
+                            if (/^_.*_$/.test(funcParams[j])) { //是占位符参数
+                                var temp = funcParams[j].replace(/_/g, "");
+                                data["_" + temp + "_"] = requestParams[funcParams[j].replace(/_/g, "")];
+                            }
+                        }
+                        // if (typeof(result) === "string") {
+                            data[params1.funcName] = new Function(argument, "return " + JSON.stringify(params1.result) + ";");
+                        // } else {
+                        //     console.log("===============================");
+                        //     console.log(typeof(params1.result))
+                        //     var dadasdasd = JSON.stringify(result);
+                        //     data[params1.funcName] = new Function(argument, "return" + result);
+                        // }
+                        // console.log(data[params1.funcName]())
+                        resolve(data);
+                    }
+                })
+            });
+            list.push(str);
+        })(i);
     }
     //执行所有的异步方法获取数据
     Promise.all(list).then(values => {

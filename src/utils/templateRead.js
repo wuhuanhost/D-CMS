@@ -1,7 +1,6 @@
 var fs = require('fs');
 var rege = /\<%\s?var\s?\w+=(\w+)\((.*?)\);?%\>/gi;
 
-
 // var html = `<% var list=getData(a,b,c);%>qweqwe<% var list=getData1(d,e);%>`;
 
 // var list = html.match(rege);
@@ -17,8 +16,6 @@ var rege = /\<%\s?var\s?\w+=(\w+)\((.*?)\);?%\>/gi;
 // }
 
 // console.log(templateFuncData)
-
-
 
 /**
  * 读取模板并且解析模板中的方法为指定格式
@@ -44,7 +41,7 @@ exports.getTemplateFuncData=function(templatePath, cb) {
             cb(null, templateFuncData);
         }
     });
-}
+};
 
 /**
  * 同步的读取模板数据的方法
@@ -64,7 +61,7 @@ exports.getTemplateFuncDataSync=function(templatePath) {
         templateFuncData.push(obj);
     }
     return templateFuncData;
-}
+};
 
 /**
  * 测试方法

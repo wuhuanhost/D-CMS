@@ -1,4 +1,4 @@
-function getData(a, b, c, cb) {
+exports.getData = function(a, b, c, cb) {
     setTimeout(function() {
         // console.log(a);
         // console.log(b);
@@ -7,17 +7,34 @@ function getData(a, b, c, cb) {
     }, 1000);
 }
 
-function abx(a, b, cb) {
+exports.abx = function(a, b, cb) {
     setTimeout(function() {
         // console.log(a);
         // console.log(b);
         // console.log(cb);
-       cb(null, parseInt(a) - parseInt(b));
+        cb(null, parseInt(a) - parseInt(b));
     }, 1000);
 }
 
 
-module.exports = {
-    getData: getData,
-    abx:abx
+var obj={
+    a:123,
+    b:456
+}
+exports.abxs = function(a, b, cb) {
+    setTimeout(function() {
+        // console.log(a);
+        // console.log(b);
+        // console.log(cb);
+        cb(null, obj);
+    }, 1000);
+}
+
+exports.abxsdasdsad = function(a, b, cb) {
+    setTimeout(function() {
+        // console.log(a);
+        // console.log(b);
+        // console.log(cb);
+        cb(null, a+b-100);
+    }, 1000);
 }
