@@ -19,7 +19,7 @@ router.get('/admin', check.checkAdminLogin, function(req, res, next) {
     var requestParams = {
         m: 100,
         n: 2
-    };
+    }; 
     //解析模后的数据结构
     var templateFuncData = [{
         funcName: "getData",
